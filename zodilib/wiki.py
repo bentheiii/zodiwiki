@@ -48,6 +48,27 @@ class Wiki:
         self.root_dir_path = path
         self.rsc_dir_path = path / 'rsc'
 
+    def scan_path(self, clear=False):
+        if clear:
+            self.clear_pages()
+
+        conf_path = self.root_dir_path / 'config.py'
+        if conf_path.is_file():
+            exec(conf_path.read_text(), {'wiki': self})
+
+        for page_path in self.root_dir_path.glob('[!_]*.md'):
+            try:
+                with page_path.open() as r:
+                    page = Page(r.read(), self)
+            except PageLoadError as e:
+                raise PageLoadError('error loading page ' + str(page_path)) from e
+            self.add_page(page)
+
+    def clear_pages(self):
+        self.titles.clear()
+        self.tags.clear()
+        self.unique_pages.clear()
+
     def add_page(self, page: Page):
         for title in page.titles:
             p = self.titles.setdefault(title.lower(), page)
@@ -87,15 +108,5 @@ class Wiki:
         if not dir_path.is_dir():
             raise ValueError('path id not a directory')
         ret.set_root_path(dir_path)
-        conf_path = dir_path / 'config.py'
-        if conf_path.is_file():
-            exec(conf_path.read_text(), {'wiki': ret})
-
-        for page_path in dir_path.glob('[!_]*.md'):
-            try:
-                with page_path.open() as r:
-                    page = Page(r.read(), ret)
-            except PageLoadError as e:
-                raise PageLoadError('error loading page ' + str(page_path)) from e
-            ret.add_page(page)
+        ret.scan_path()
         return ret

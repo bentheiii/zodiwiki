@@ -1,4 +1,4 @@
-from flask import redirect, send_from_directory, render_template
+from flask import redirect, send_from_directory, render_template, request
 
 from zodilib import Wiki
 
@@ -51,6 +51,11 @@ def index():
         return redirect(wiki.link_to('index'))
     return redirect('/all')
 
+@app.route('/match')
+def matches_request():
+    main = request.args['main']
+    hints = request.args.get('hints', '')
+    return matches(main, hints)
 
 @app.route('/match/<string:main>/')
 @app.route('/match/<string:main>/<string:hints>')
@@ -64,6 +69,12 @@ def matches(main, hints=''):
         pages.append((wiki.link_to(page), page.title, score))
     return render_template('matches.html', pages=pages, query=query_for(main, hints))
 
+
+@app.route('/bestmatch')
+def best_match_request():
+    main = request.args['main']
+    hints = request.args.get('hints', '')
+    return best_match(main, hints)
 
 @app.route('/bestmatch/<string:main>/')
 @app.route('/bestmatch/<string:main>/<string:hints>')
@@ -99,5 +110,4 @@ def about():
     return render_template('about.html')
 
 # todo create file?
-# todo text search?
 # todo pre-generate all the links?

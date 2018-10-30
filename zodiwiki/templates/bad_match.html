@@ -6,6 +6,7 @@
 No article found
 {% endblock %}
 {% block content %}
+<p>
 <u>
     {% if reason == 'bad' %}
     No article was found matching
@@ -14,7 +15,8 @@ No article found
     Multiple articles were found matching
     {% endif %}
     query {{ query }}, the candidates are:</u>
-<ul>
+</p>
+<ul class="results">
 {% for link, title, score in pages %}
 <li><a href="{{link}}">{{title}} (score: {{score}})</a></li>
 {% endfor %}

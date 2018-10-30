@@ -47,6 +47,3 @@ def show_(server):
     """open a browser window to the wiki"""
     url = server.url()
     webbrowser.open(url)
-
-# todo reload config
-# todo reload pages?

@@ -49,9 +49,11 @@ def main(args=None):
     print('@ ' + server_thread.url())
 
     command_dict = control.Controller()
-    command_dict.register(wiki)
+    command_dict.register(wiki, _name='wiki', _doc='the main wiki object')
     command_dict.register(control.quit_, server_thread)
     command_dict.register(control.show_, server_thread)
+    command_dict.register(wiki.scan_path, clear=True, _name='re_scan',
+                          _doc='re-scan the wiki directory (note, does not update the html templates)')
 
     while True:
         comm = input()

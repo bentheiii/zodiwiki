@@ -6,8 +6,8 @@
 Match
 {% endblock %}
 {% block content %}
-<u>This following articles match query {{query}}</u>
-<ul>
+<p><u>This following articles match query {{query}}</u></p>
+<ul class="results">
 {% for link, title, score in pages %}
 <li><a href="{{link}}">{{title}} (score: {{score}})</a></li>
 {% endfor %}
