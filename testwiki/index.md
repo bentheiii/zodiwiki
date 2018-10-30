@@ -1,4 +1,4 @@
-title: index
+title: Index
 tag: mosey
 
 # home

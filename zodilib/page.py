@@ -2,22 +2,9 @@ from typing import Set, Dict, Iterable, List
 
 import re
 
-import markdown
-from markdown.extensions.footnotes import FootnoteExtension
-from markdown.extensions.tables import TableExtension
-from markdown.extensions.toc import TocExtension
-from markdown.extensions.meta import MetaExtension
+from flask import Markup
 
-from zodilib.extensions import HintedWikiLinkExtension, AutoTitleExtension
-
-md = markdown.Markdown(extensions=[
-    FootnoteExtension(),
-    TocExtension(),
-    TableExtension(),
-    MetaExtension(),
-    AutoTitleExtension(),
-    HintedWikiLinkExtension()
-])
+from zodilib.exceptions import PageLoadError
 
 tag_split_pattern = re.compile('\s*,\s*')
 
@@ -34,7 +21,7 @@ hint_term_multiplier = 1
 max_score = exact_match_multiplier * title_term_multiplier
 
 term_blacklist = {
-    'the', 'in', 'of', 'a', 'on', 'to', 'it', 'as', 'be', 'nt', 's', ''
+    'the', 'in', 'of', 'a', 'on', 'to', 'it', 'as', 'be', 'nt', 's', '', 'and', 'or'
 }
 
 
@@ -52,16 +39,16 @@ def merge_keys(d: dict, *keys: str):
 # Note, all strings are stored as case-invariant, but are compared by lower-case
 class Page:
     @classmethod
-    def read(cls, source):
-        return cls(source.read())
+    def read(cls, source, **kwargs):
+        return cls(source.read(), **kwargs)
 
-    def __init__(self, md: str, ):
+    def __init__(self, md: str, wiki):
         self.titles: List[str] = []  # titles here are stored case-insensitive
         self.md = md
         self.html: str = None
         self.tags: Set[str] = set()  # all tags are stored in lowercase
         self.terms: Dict[str, int] = None  # all terms are stored in lowerspace
-        self.load()
+        self.load(wiki)
         self.update_terms()
 
     @property
@@ -69,18 +56,18 @@ class Page:
         return self.titles[0]
 
     @property
-    def linkto(self):
+    def link_to(self):
         return '/page/'+self.title
 
-    def load(self):
-        self.html = md.convert(self.md)
-        meta: Dict[str, Iterable[str]] = md.Meta
-        md.reset()
+    def load(self, wiki):
+        self.html = Markup(wiki.md.convert(self.md))
+        meta: Dict[str, Iterable[str]] = wiki.md.Meta
+        wiki.md.reset()
 
         try:
-            titles = merge_keys(meta, 'title', 'titles')
+            titles = merge_keys(meta, 'title', 'titles', 'alias', 'aliases')
         except KeyError:
-            raise Exception('page must have a title')  # todo get path? maybe from from_dir
+            raise PageLoadError('page must have a title')
         self.titles.extend(titles)
 
         m_tags = merge_keys(meta, 'tag', 'tags')

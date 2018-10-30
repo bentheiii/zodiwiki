@@ -5,9 +5,10 @@ verify_ssl = true
 
 
 [packages]
-
 flask = "*"
 markdown = "*"
+sortedcontainers = "*"
+gevent="*"
 
 
 [requires]

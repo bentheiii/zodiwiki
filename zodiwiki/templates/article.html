@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block title %}
+{{ page.title }}
+{% endblock %}
+{% block content %}
+{{ page.html }}
+<u>This article has the following tags</u>
+<ul>
+{% for tag in page.tags|sort %}
+<li><a href="/page/{{tag}}">{{tag}}</a></li>
+{% endfor %}
+</ul>
+<u>This article has the following articles tagged</u>
+<ul>
+{% for (link, sp_title) in sp_titles %}
+<li><a href="{{link}}">{{sp_title}}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

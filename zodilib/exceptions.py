@@ -1,0 +1,2 @@
+class PageLoadError(Exception):
+    pass

@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+<head>
+{% block head %}
+<style>
+.content {
+    {{config['wiki'].content_style}}
+}
+{{config['wiki'].style_inject}}
+</style>
+{% endblock %}
+</head>
+<title>{{ config['wiki'].title }} - {% block title %}{% endblock %}</title>
+<body class="content">
+<header>
+{% block header %}
+<h1><a href="/"><img src="{{config['wiki'].logo}}" alt="logo"
+                     style="max-width:100px;max-height:100px;width:auto;height:auto;">
+    {{ config['wiki'].title }}</a></h1>
+{% endblock %}
+</header>
+<div id="content">{% block content %}{% endblock %}</div>
+<div id="footer">
+{% block footer %}
+Powered by <a href="/about">{{config['prog']}}</a><br />
+Made by {{config['author']}}. MIT License <a href="/src">source</a>.
+{% endblock %}
+</div>
+</body>
+</html>

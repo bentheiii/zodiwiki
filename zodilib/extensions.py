@@ -3,7 +3,7 @@ import re
 from markdown.inlinepatterns import Pattern
 from markdown.preprocessors import Preprocessor
 from markdown.extensions import Extension
-from markdown.util import etree
+from markdown.util import etree, AtomicString
 
 
 class HintedWikiLinkExtension(Extension):
@@ -12,7 +12,7 @@ class HintedWikiLinkExtension(Extension):
 
 
 class HintedWikiLinkPattern(Pattern):
-    Pattern = r'(?<!\\){(?P<main>[^{}|]+)(\|(?P<hints>([^{}|])*))?}'
+    Pattern = r'(?<!\\){(?P<main>[^{}|=]+)(\|(?P<hints>([^{}|=])*))?}'
 
     def __init__(self, pattern=Pattern):
         super().__init__(pattern)
@@ -23,7 +23,35 @@ class HintedWikiLinkPattern(Pattern):
     def handleMatch(self, m):
         ret = etree.Element('a')
         ret.text = m['main']
-        ret.set('href', f'/bestmatch/{m["main"]}/{m["hints"] or ""}')
+        ret.set('href', AtomicString(f'/bestmatch/{m["main"]}/{m["hints"] or ""}'))
+        return ret
+
+
+class SizeEnabledImageExtension(Extension):
+    def extendMarkdown(self, md, md_globals):
+        md.inlinePatterns.add("sizeenbaleimage", SizeEnabledImagePattern(), '<image_link')
+
+
+class SizeEnabledImagePattern(Pattern):
+    Pattern = \
+        r'!\[(?P<alt>[^\]]*)\]\((?P<src>\S+)(\s\"(?P<title>[^\"]*)\")?(\s=(?P<width>[0-9]+)x(?P<height>[0-9]+)?)?\)'
+
+    def __init__(self, pattern=Pattern):
+        super().__init__(pattern)
+
+    def getCompiledRegExp(self):
+        return super().getCompiledRegExp()
+
+    def handleMatch(self, m):
+        ret = etree.Element('img')
+        ret.set('src', AtomicString(m['src']))
+        ret.set('alt', AtomicString(m['alt']))
+        if m['title']:
+            ret.set('title', AtomicString(m['title']))
+        if m['width']:
+            ret.set('width', m['width'])
+        if m['height']:
+            ret.set('height', m['height'])
         return ret
 
 

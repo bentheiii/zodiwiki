@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block title %}
+Match
+{% endblock %}
+{% block content %}
+<u>This following articles match query {{query}}</u>
+<ul>
+{% for link, title, score in pages %}
+<li><a href="{{link}}">{{title}} (score: {{score}})</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

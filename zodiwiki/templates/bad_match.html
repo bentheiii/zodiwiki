@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block title %}
+No article found
+{% endblock %}
+{% block content %}
+<u>
+    {% if reason == 'bad' %}
+    No article was found matching
+    {% endif %}
+    {% if reason == 'ambiguous' %}
+    Multiple articles were found matching
+    {% endif %}
+    query {{ query }}, the candidates are:</u>
+<ul>
+{% for link, title, score in pages %}
+<li><a href="{{link}}">{{title}} (score: {{score}})</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
