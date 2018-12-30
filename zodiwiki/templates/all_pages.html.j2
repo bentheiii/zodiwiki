@@ -1,0 +1,22 @@
+{% extends "base.html.j2" %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block title %}
+    All Pages
+{% endblock %}
+{% block content %}
+    <p><u>The following articles are defined in this wiki</u></p>
+    <ul class="results">
+        {% for link, title in articles %}
+            <li><a href="{{ link }}">{{ title }}</a></li>
+        {% endfor %}
+    </ul>
+    <p><u>The following tags are defined in this wiki</u></p>
+    <ul class="results">
+        {% for (link, title) in tags %}
+            <li><a href="{{ link }}">{{ title }}</a></li>
+        {% endfor %}
+    </ul>
+    <p><a href="/edit">create a new page</a></p>
+{% endblock %}

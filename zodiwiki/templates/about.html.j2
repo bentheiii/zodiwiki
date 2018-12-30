@@ -1,0 +1,13 @@
+{% extends "base.html.j2" %}
+{% block title %}
+    About
+{% endblock %}
+{% block header %}
+    {{ super() }}
+    About
+{% endblock %}
+{% block content %}
+    <p>{{ config['prog'] }}</p>
+    <p>This site is meant for displaying ZodiWiki directories. To learn more about zodiwiki visit the <a href="\src">source
+        code</a>.</p>
+{% endblock %}

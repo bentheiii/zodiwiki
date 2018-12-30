@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+<head>
+    {% block head %}
+        <style>
+            a.weak {
+                color: red;
+            }
+
+            a.ambiguous {
+                color: orange;
+            }
+
+            a.cyclical {
+                color: green;
+            }
+
+            .content {
+            {{config['wiki'].content_style}}
+            }
+
+            {{config['wiki'].style_inject}}
+        </style>
+    {% endblock %}
+</head>
+<title>{{ config['wiki'].title }} - {% block title %}{% endblock %}</title>
+<body class="content">
+<header>
+    {% block header %}
+        <div>
+            <h1><a href="/"><img src="{{ config['wiki'].logo }}" alt="logo"
+                                 style="max-width:100px;max-height:100px;width:auto;height:auto;">
+                {{ config['wiki'].title }}</a></h1>
+            <form action="/match" method="get">
+                <label> search
+                    <input type="text" name="main"/>
+                </label>
+                <input type="submit" value="Best Match" formaction="/bestmatch">
+            </form>
+        </div>
+    {% endblock %}
+</header>
+<div class="main">{% block content %}{% endblock %}</div>
+<div id="footer">
+    {% block footer %}
+        Powered by <a href="/about">{{ config['prog'] }}</a><br/>
+        Made by {{ config['author'] }}. MIT License <a href="/src">source</a>.
+    {% endblock %}
+</div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+{% extends "base.html.j2" %}
+{% block head %}
+    <script>
+        function showpreview() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    document.getElementById("preview").innerHTML = this.responseText;
+                }
+            };
+            xhttp.open('POST', '/preview');
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            const md = document.getElementById('usermd').value;
+            xhttp.send('md=' + encodeURIComponent(md));
+            return false;
+        }
+    </script>
+    {{ super() }}
+{% endblock %}
+{% block title %}
+    Edit- {{ filename }}
+{% endblock %}
+{% block content %}
+    <p><u>editing page: {{ filename }}</u></p>
+    <form action="/submit_edit" method="post">
+        <input type="hidden" name="srcfilename" value="{{ filename }}">
+        <textarea id="usermd" name="usermd" placeholder="markdown text..." rows="40"
+                  cols="100">{{ filedata }}</textarea>
+        <br/>
+        <label>
+            destination file name: <input id="dstnametext" name="dstfilename" type="text" value="{{ filename }}"
+                                          required oninput="verifyCloneAndOverwrite();">
+        </label>
+        <label id="clonelabel">
+            clone page <input type="checkbox" name="cloneflag">
+        </label>
+        <label id="overwritelabel">
+            overwrite existing pages <input type="checkbox" name="overwriteflag">
+        </label>
+        <br/>
+        <input type="submit" value="submit">
+        <button onclick="return showpreview()">preview</button>
+    </form>
+    <div id="preview"></div>
+    <script>
+        {% if filename %}
+            function verifyCloneAndOverwrite() {
+                if (document.getElementById("dstnametext").value === "{{ filename }}") {
+                    document.getElementById("overwritelabel").style.display =
+                        document.getElementById("clonelabel").style.display = "none";
+                }
+                else {
+                    document.getElementById("overwritelabel").style.display =
+                        document.getElementById("clonelabel").style.display = "inline";
+                }
+            }
+            verifyCloneAndOverwrite();
+        {% else %}
+            function verifyClone() {}
+            document.getElementById("clonelabel").style.display = "none";
+        {% endif %}
+    </script>
+{% endblock %}
+{# todo changes will not be saved dialog #}
